@@ -1,0 +1,16 @@
+.phonebook {
+  display: grid;
+  place-items: center;
+}
+
+.error p {
+  padding: 0.5rem;
+  color: red;
+  border: 1px solid red;
+}
+
+.success p {
+  padding: 0.5rem;
+  color: green;
+  border: 1px solid green;
+}

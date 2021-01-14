@@ -1,0 +1,23 @@
+.error {
+  color: red;
+  border: 1px solid red;
+  margin-bottom: 1rem;
+}
+
+.error p {
+  margin: 0;
+  padding: 5px;
+  text-align: center;
+}
+
+.success {
+  color: green;
+  border: 1px solid green;
+  margin-bottom: 1rem;
+}
+
+.success p {
+  margin: 0;
+  padding: 5px;
+  text-align: center;
+}

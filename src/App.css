@@ -1,0 +1,13 @@
+html {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+table {
+  /* width: 20rem; */
+  /* border-collapse: collapse; */
+  /* border: 1px solid #000; */
+}
