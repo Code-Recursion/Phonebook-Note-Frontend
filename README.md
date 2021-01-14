@@ -1,3 +1,5 @@
+# Full Stack Phonebook App
+### Note - this repo only contains the source code of frontend which is written in ReactJS
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
