@@ -21,3 +21,15 @@
   padding: 5px;
   text-align: center;
 }
+
+.warning {
+  color: orange;
+  border: 1px solid orange;
+  margin-bottom: 1rem;
+}
+
+.warning p {
+  margin: 0;
+  padding: 5px;
+  text-align: center;
+}
