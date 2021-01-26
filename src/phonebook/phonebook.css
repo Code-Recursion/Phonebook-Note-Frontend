@@ -14,3 +14,8 @@
   color: green;
   border: 1px solid green;
 }
+.invalid p {
+  padding: 0.5rem;
+  color: orange;
+  border: 1px solid orange;
+}

@@ -8,8 +8,7 @@ const Phonebook = () => {
   const [number, setNumber] = useState("");
   const [deleteAlert, setDeleteAlert] = useState(null);
   const [createAlert, setCreateAlert] = useState(null);
-  const [error, setError] = useState(null);
-  const [update, setUpdate] = useState(null);
+  const [invalidAlert, setInvalidAlert] = useState(null);
 
   useEffect(() => {
     contactService.getAllContact().then((data) => {
@@ -27,16 +26,21 @@ const Phonebook = () => {
 
     if (exists.length === 0) {
       if (contact === "" && number === "") {
-        setError("Contact's name or number can't be empty!");
+        setDeleteAlert("Contact's name or number can't be empty!");
         setTimeout(() => {
-          setError(null);
+          setDeleteAlert(null);
         }, 5000);
-      }
-      if (contact !== "" && number !== "") {
-        setContacts(contacts.concat(contactObj));
-      }
-
-      if (contact !== "" && number !== "") {
+      } else if (contact.length < 6 || number.length < 6) {
+        setInvalidAlert("Name or Number can't be less than 6 characters long");
+        setTimeout(() => {
+          setInvalidAlert(null);
+        }, 5000);
+      } else if (isNaN(number)) {
+        setInvalidAlert("Number can't contain string");
+        setTimeout(() => {
+          setInvalidAlert(null);
+        }, 5000);
+      } else {
         contactService.addContact(contactObj).then((data) => {
           setContacts(contacts.concat(data));
           setCreateAlert(`Contact "${contactObj.name}" added successfully`);
@@ -51,14 +55,12 @@ const Phonebook = () => {
           `The contact with name ${contactObj.name} already exists do you want to replace it?`
         )
       ) {
-        console.log("exists", exists[0].id);
         contactService.updateContact(exists[0].id, contactObj).then((data) => {
           setContacts(contacts.map((person) => (person.name !== contactObj.name ? person : data)));
-          console.log("data", data);
         });
-        setUpdate(`Contact ${contactObj.name} updated successfully`);
+        setCreateAlert(`Contact ${contactObj.name} updated successfully`);
         setTimeout(() => {
-          setUpdate(null);
+          setCreateAlert(null);
         }, 5000);
       }
     }
@@ -103,19 +105,10 @@ const Phonebook = () => {
     );
   };
 
-  const CreateErrorNotification = (props) => {
-    if (!props.message) return null;
-    return (
-      <div className="error">
-        <p>{props.message}</p>
-      </div>
-    );
-  };
-
-  const CreateUpdateNotification = ({ message }) => {
+  const ValidationNotification = ({ message }) => {
     if (!message) return null;
     return (
-      <div className="success">
+      <div className="invalid">
         <p>{message}</p>
       </div>
     );
@@ -134,8 +127,7 @@ const Phonebook = () => {
       <h1>Phonebook</h1>
       <DeleteNotification message={deleteAlert} />
       <CreateNotification message={createAlert} />
-      <CreateErrorNotification message={error} />
-      <CreateUpdateNotification message={update} />
+      <ValidationNotification message={invalidAlert} />
 
       <form onSubmit={handleAddContact}>
         <p>
