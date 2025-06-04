@@ -62,9 +62,13 @@ const Note = () => {
 
     noteService
       .update(id, changedNote)
-      .then((data) => setNotes(notes.map((note) => (note.id !== id ? note : data))))
+      .then((data) =>
+        setNotes(notes.map((note) => (note.id !== id ? note : data)))
+      )
       .catch((error) => {
-        setErrorMessage(`the Note ${note.content} was already deleted from the server`);
+        setErrorMessage(
+          `the Note ${note.content} was already deleted from the server`
+        );
 
         setTimeout(() => {
           setErrorMessage(null);
@@ -121,10 +125,16 @@ const Note = () => {
         <Success message={successMessage} />
         <Error message={invalidNote} />
 
-        <button onClick={() => setShowAll(!showAll)}>show {showAll ? "important" : "All"}</button>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll ? "important" : "All"}
+        </button>
         <ul>
           {notesToShow.map((note, i) => (
-            <Note key={i} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
+            <Note
+              key={i}
+              note={note}
+              toggleImportance={() => toggleImportanceOf(note.id)}
+            />
           ))}
         </ul>
         <form onSubmit={addNote}>
