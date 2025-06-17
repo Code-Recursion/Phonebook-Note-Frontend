@@ -10,6 +10,15 @@ const setToken = (newToken) => {
   token = `bearer ${newToken}`;
 };
 
+// const addNote = async (data) => {
+//   const config = {
+//     headers: { Authorization: token },
+//   };
+
+//   const response = await axios.post(baseUrl, data, config);
+//   return response.data;
+// };
+
 const getAll = (userId) => {
   const config = {
     headers: { Authorization: token },

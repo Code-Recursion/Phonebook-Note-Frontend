@@ -21,6 +21,22 @@ const Note = () => {
     noteService.getAll(user?.userId).then((data) => setNotes(data));
   }, []);
 
+  const addUserNote = (event) => {
+    event.preventDefault();
+
+    const userData = window?.localStorage?.getItem("loggedNoteappUser");
+    const user = JSON.parse(userData);
+
+    const noteObj = {
+      content: newNote,
+      date: new Date().toISOString(),
+      important: Math.random() < 0.5,
+      user: user.userId,
+    };
+
+    noteService.create(noteObj);
+  };
+
   const addNote = (event) => {
     event.preventDefault();
 
@@ -144,7 +160,7 @@ const Note = () => {
             />
           ))}
         </ul>
-        <form onSubmit={addNote}>
+        <form onSubmit={addUserNote}>
           <input value={newNote} onChange={handleNewNote} />
           <button>save</button>
         </form>
