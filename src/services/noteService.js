@@ -10,8 +10,11 @@ const setToken = (newToken) => {
   token = `bearer ${newToken}`;
 };
 
-const getAll = () => {
-  const request = axios.get(baseUrl);
+const getAll = (userId) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const request = axios.get(baseUrl + "/" + userId, config);
   return request.then((res) => res.data);
 };
 

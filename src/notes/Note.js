@@ -11,7 +11,14 @@ const Note = () => {
   const [invalidNote, setInvalidNote] = useState(null);
 
   useEffect(() => {
-    noteService.getAll().then((data) => setNotes(data));
+    let userData;
+    let user;
+    if (window !== undefined) {
+      userData = window?.localStorage?.getItem("loggedNoteappUser");
+      user = JSON.parse(userData);
+      console.log("user", user);
+    }
+    noteService.getAll(user?.userId).then((data) => setNotes(data));
   }, []);
 
   const addNote = (event) => {
