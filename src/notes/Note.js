@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import noteService from "../services/noteService";
 import "./note.css";
+import StarFilled from "../assets/icons/start-filled";
+import Star from "../assets/icons/star";
 
 const Note = () => {
   const [notes, setNotes] = useState([]);
@@ -35,6 +37,12 @@ const Note = () => {
     };
 
     noteService.create(noteObj);
+    setNotes(notes.concat(noteObj));
+    setNewNote("");
+    setSuccessMessage(`Note : "${newNote}" successfully added`);
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 5000);
   };
 
   const addNote = (event) => {
@@ -102,12 +110,19 @@ const Note = () => {
   };
 
   const Note = ({ note, toggleImportance }) => {
-    const label = note.important ? "mark not important" : "mark important";
+    console.log("toggle");
+    const Logo = note.important ? <StarFilled /> : <Star />;
     return (
       <p>
         <li>
           {note.content}
-          &nbsp;&nbsp;<button onClick={toggleImportance}>{label}</button>
+          &nbsp;&nbsp;
+          <button
+            style={{ border: "none", background: "none", outline: "none" }}
+            onClick={toggleImportance}
+          >
+            {Logo}
+          </button>
         </li>
       </p>
     );
@@ -144,6 +159,7 @@ const Note = () => {
     <div>
       <>
         <h1>Naughty Notes</h1>
+
         <Notification message={errorMessage} />
         <Success message={successMessage} />
         <Error message={invalidNote} />
