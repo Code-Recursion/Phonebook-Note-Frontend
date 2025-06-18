@@ -23,7 +23,7 @@ const Note = () => {
     noteService.getAll(user?.userId).then((data) => setNotes(data));
   }, []);
 
-  const addUserNote = (event) => {
+  const addUserNote = async (event) => {
     event.preventDefault();
 
     const userData = window?.localStorage?.getItem("loggedNoteappUser");
@@ -36,13 +36,32 @@ const Note = () => {
       user: user.userId,
     };
 
-    noteService.create(noteObj);
-    setNotes(notes.concat(noteObj));
-    setNewNote("");
-    setSuccessMessage(`Note : "${newNote}" successfully added`);
-    setTimeout(() => {
-      setSuccessMessage(null);
-    }, 5000);
+    if (newNote === "") {
+      setErrorMessage("Note can't be empty");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    } else if (newNote.length < 6) {
+      setInvalidNote(`Note content can't be less than 5 characters`);
+      setTimeout(() => {
+        setInvalidNote(null);
+      }, 5000);
+    } else {
+      try {
+        const note = await noteService.create(noteObj);
+        setNotes(notes.concat(note));
+        setNewNote("");
+        setSuccessMessage(`Note : "${newNote}" successfully added`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      } catch (error) {
+        setErrorMessage(`Note creation failed!`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      }
+    }
   };
 
   const addNote = (event) => {
@@ -110,11 +129,16 @@ const Note = () => {
   };
 
   const Note = ({ note, toggleImportance }) => {
-    console.log("toggle");
+    console.log("toggle", note);
     const Logo = note.important ? <StarFilled /> : <Star />;
     return (
       <p>
-        <li>
+        <li
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           {note.content}
           &nbsp;&nbsp;
           <button
