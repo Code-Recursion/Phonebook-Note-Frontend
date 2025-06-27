@@ -3,6 +3,7 @@ import noteService from "../services/noteService";
 import "./note.css";
 import StarFilled from "../assets/icons/start-filled";
 import Star from "../assets/icons/star";
+import DeleteIcon from "../assets/icons/DeleteIcon";
 
 const Note = () => {
   const [notes, setNotes] = useState([]);
@@ -11,6 +12,7 @@ const Note = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [invalidNote, setInvalidNote] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     let userData;
@@ -18,10 +20,14 @@ const Note = () => {
     if (window !== undefined) {
       userData = window?.localStorage?.getItem("loggedNoteappUser");
       user = JSON.parse(userData);
-      console.log("user", user);
     }
+    setUser(user);
     noteService.getAll(user?.userId).then((data) => setNotes(data));
   }, []);
+
+  const fetchUserNotes = () => {
+    noteService.getAll(user?.userId).then((data) => setNotes(data));
+  };
 
   const addUserNote = async (event) => {
     event.preventDefault();
@@ -32,7 +38,7 @@ const Note = () => {
     const noteObj = {
       content: newNote,
       date: new Date().toISOString(),
-      important: Math.random() < 0.5,
+      important: false,
       user: user.userId,
     };
 
@@ -116,9 +122,7 @@ const Note = () => {
         setNotes(notes.map((note) => (note.id !== id ? note : data)))
       )
       .catch((error) => {
-        setErrorMessage(
-          `the Note ${note.content} was already deleted from the server`
-        );
+        setErrorMessage("failed to toggle the importance");
 
         setTimeout(() => {
           setErrorMessage(null);
@@ -127,9 +131,25 @@ const Note = () => {
         setNotes(notes.filter((n) => n.id !== id));
       });
   };
+  const handleDelete = (id) => {
+    noteService
+      .remove(id)
+      .then((data) => {
+        fetchUserNotes();
+        setSuccessMessage(`Note is successfully deleted!`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        setErrorMessage(`the was already deleted from the server`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      });
+  };
 
-  const Note = ({ note, toggleImportance }) => {
-    console.log("toggle", note);
+  const Note = ({ note, toggleImportance, handleDelete }) => {
     const Logo = note.important ? <StarFilled /> : <Star />;
     return (
       <p>
@@ -146,6 +166,9 @@ const Note = () => {
             onClick={toggleImportance}
           >
             {Logo}
+          </button>
+          <button onClick={handleDelete}>
+            <DeleteIcon />
           </button>
         </li>
       </p>
@@ -197,6 +220,7 @@ const Note = () => {
               key={i}
               note={note}
               toggleImportance={() => toggleImportanceOf(note.id)}
+              handleDelete={() => handleDelete(note.id)}
             />
           ))}
         </ul>
