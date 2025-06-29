@@ -66,7 +66,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="relative">
       {errorMessage && <div className="error">{errorMessage}</div>}
 
       {user === null ? (

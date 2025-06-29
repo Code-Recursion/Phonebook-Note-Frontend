@@ -4,6 +4,8 @@ import "./note.css";
 import StarFilled from "../assets/icons/start-filled";
 import Star from "../assets/icons/star";
 import DeleteIcon from "../assets/icons/DeleteIcon";
+import EditIcon from "../assets/icons/EditIcon";
+import EditNoteModal from "./EditNoteModal";
 
 const Note = () => {
   const [notes, setNotes] = useState([]);
@@ -13,6 +15,8 @@ const Note = () => {
   const [successMessage, setSuccessMessage] = useState(null);
   const [invalidNote, setInvalidNote] = useState(null);
   const [user, setUser] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(null);
+  const [noteToEdit, setNoteToEdit] = useState(null);
 
   useEffect(() => {
     let userData;
@@ -37,7 +41,7 @@ const Note = () => {
 
     const noteObj = {
       content: newNote,
-      date: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
       important: false,
       user: user.userId,
     };
@@ -70,41 +74,41 @@ const Note = () => {
     }
   };
 
-  const addNote = (event) => {
-    event.preventDefault();
+  // const addNote = (event) => {
+  //   event.preventDefault();
 
-    if (newNote === "") {
-      setErrorMessage("Note can't be empty");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-    } else if (newNote.length < 6) {
-      setInvalidNote(`Note content can't be less than 5 characters`);
-      setTimeout(() => {
-        setInvalidNote(null);
-      }, 5000);
-    } else {
-      const noteObj = {
-        content: newNote,
-        date: new Date().toISOString(),
-        important: Math.random() < 0.5,
-        id: notes.length + 1,
-      };
-      noteService
-        .create(noteObj)
-        .then((data) => {
-          setNotes(notes.concat(data));
-          setNewNote("");
-          setSuccessMessage(`Note : "${newNote}" successfully added`);
-          setTimeout(() => {
-            setSuccessMessage(null);
-          }, 5000);
-        })
-        .catch((error) => {
-          console.log("error while adding note", error.message);
-        });
-    }
-  };
+  //   if (newNote === "") {
+  //     setErrorMessage("Note can't be empty");
+  //     setTimeout(() => {
+  //       setErrorMessage(null);
+  //     }, 5000);
+  //   } else if (newNote.length < 6) {
+  //     setInvalidNote(`Note content can't be less than 5 characters`);
+  //     setTimeout(() => {
+  //       setInvalidNote(null);
+  //     }, 5000);
+  //   } else {
+  //     const noteObj = {
+  //       content: newNote,
+  //       date: new Date().toISOString(),
+  //       important: Math.random() < 0.5,
+  //       id: notes.length + 1,
+  //     };
+  //     noteService
+  //       .create(noteObj)
+  //       .then((data) => {
+  //         setNotes(notes.concat(data));
+  //         setNewNote("");
+  //         setSuccessMessage(`Note : "${newNote}" successfully added`);
+  //         setTimeout(() => {
+  //           setSuccessMessage(null);
+  //         }, 5000);
+  //       })
+  //       .catch((error) => {
+  //         console.log("error while adding note", error.message);
+  //       });
+  //   }
+  // };
 
   const handleNewNote = (event) => {
     setNewNote(event.target.value);
@@ -149,6 +153,12 @@ const Note = () => {
       });
   };
 
+  const handleEdit = (note) => {
+    // const note = notes.filter((item) => item.id === note.id);
+    setEditModalOpen(true);
+    setNoteToEdit(note);
+  };
+
   const Note = ({ note, toggleImportance, handleDelete }) => {
     const Logo = note.important ? <StarFilled /> : <Star />;
     return (
@@ -167,8 +177,19 @@ const Note = () => {
           >
             {Logo}
           </button>
-          <button onClick={handleDelete}>
+          <button
+            style={{ border: "none", background: "none", outline: "none" }}
+            onClick={handleDelete}
+          >
             <DeleteIcon />
+          </button>
+          <button
+            style={{ border: "none", background: "none", outline: "none" }}
+            onClick={() => {
+              handleEdit(note);
+            }}
+          >
+            <EditIcon />{" "}
           </button>
         </li>
       </p>
@@ -210,6 +231,8 @@ const Note = () => {
         <Notification message={errorMessage} />
         <Success message={successMessage} />
         <Error message={invalidNote} />
+
+        <EditNoteModal isOpen={editModalOpen} note={noteToEdit} />
 
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? "important" : "All"}
